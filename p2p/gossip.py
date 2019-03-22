@@ -51,7 +51,7 @@ def handle_message(type, message, sender):
         chain = chaindb.chain
         print(block)
         print(block.is_valid())
-        if not block.hash in chain.blocks and block.is_valid():
+        if not block.hash in chain.blocks and block.is_valid()[0]:
             # if it's a valid block we haven't seen, retransmit
             chain.add_block(block)
             gossip_message(type, message)
