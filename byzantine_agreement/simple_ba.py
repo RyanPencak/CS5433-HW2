@@ -53,11 +53,21 @@ class SimplePKIBA:
         """
         # Get all proposals with r votes, including sender
 
-        # placeholder for (3.1)
-                # proposal is new proposal that has just achieved threshold (m not in Sj)
-                # Pseudocode: then j adds m to its set Sj, signs m using its secret key skj, and multicasts...
+        proposals = []
+        eligible_proposals = self.get_proposals_with_threshold(round)
 
-        return []
+        # placeholder for (3.1)
+        for m in eligible_proposals:
+            # proposal is new proposal that has just achieved threshold (m not in Sj)
+            # Pseudocode: then j adds m to its set Sj, signs m using its secret key skj, and multicasts...
+            if (m not in self.s_i):
+                proposals.append(m)
+                self.s_i.append(m)
+                self.votes[m].add(config.node_id)
+                proposal_sig = util.sign_message(m, config.SECRET_KEYS[config.node_id])
+                self.signatures[m].append((config.node_id, proposal_sig))
+
+        return proposals
 
     def get_proposals_with_threshold(self, round):
         """ Gets proposals that have reached the threshold required by a given round.
@@ -74,7 +84,13 @@ class SimplePKIBA:
         # Pseudocode: with signatures from r different players, including player s
 
         # placeholder for (3.2)
-        return []
+        eligible_proposals = []
+
+        for m,votes in self.votes.items():
+            if ((len(votes) >= round) and (1 in votes)):
+                eligible_proposals.append(m)
+
+        return eligible_proposals
 
     def broadcast_votes_for(self, round, votes):
         """ Broadcast votes on a proposal to all nodes; this happens once a proposal is added to s_i. """
@@ -119,7 +135,13 @@ class SimplePKIBA:
         # Pseudocode: (Output) Each player i outputs 0 if |Si| > 1 and otherwise outputs the unique element in Si.
 
         # placeholder for (3.3)
-        return []
+        if (self.is_done()):
+            if (len(self.s_i) == 1):
+                return self.s_i[0]
+            else:
+                return 0
+
+        return None
 
     @run_async
     def run_protocol_loop(self):
