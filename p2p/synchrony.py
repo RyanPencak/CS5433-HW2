@@ -21,17 +21,32 @@ def get_curr_round():
 
         Returns:
             int: The integer value of the current round.
+
+
+        Based on the start time and current time, this function should compute 
+        the return the current round number as an integer and a function of all 
+        the provided global constants.
     """
     global start_time, round_length
-    # Do not round intermediate arithmetic
 
+    # Do not round intermediate arithmetic
     # placeholder for (2.2)
-    return 0
+    if is_started():
+        elapsed_time = time.time()-start_time
+        curr_round = int(elapsed_time/round_length)
+        return curr_round
+    else:
+        return None
 
 def should_send():
     """ Determine whether a node should be sending messages when queried.
         See the PDF on where in the round this falls.
         Returns True if a node should send, False otherwise.
+
+        returning True if an honest node would be broadcasting in this part 
+        of the round.
+
+
     """
     global start_time, synchrony_assumption, round_length
     # Do not round anywhere in this function.  You will need get_curr_round() in addition to the above.
@@ -39,15 +54,27 @@ def should_send():
     # specifically w.r.t. timing assumptions at the boundaries of the synchrony assumption
 
     # placeholder for (2.3)
-    return False
+    if is_started():
+        curr_round = get_curr_round()
+        round_time = (time.time() - start_time) - curr_round*round_length 
+        if round_time >= synchrony_assumption and round_time < 2*synchrony_assumption:
+            return True
+        else:
+            return False
 
 def receive_start_message():
     """ Called on receipt of a start message; starts tracking rounds and initializes
         logging to stdout (see log_synchrony).
+
+        This function should initiate the synchrony round tracker by setting 
+        the start time and running the logger.
+
     """
     global start_time
 
     # placeholder for (2.1)
+    start_time = time.time()
+    log_synchrony()
 
 @run_async
 def log_synchrony():

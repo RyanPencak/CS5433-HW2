@@ -31,9 +31,9 @@ def gossip_message(type, message):
 
     # (placeholder for 1)
     for i in [1,2,3,4,5,6]:
-    if i != config.node_id:
-        port = 5000+i
-        send_message('http://127.0.0.1:%d/'%port, type, message)
+        if i != config.node_id:
+            port = 5000+i
+            send_message('http://127.0.0.1:%d/'%port, type, message)
 
 def handle_message(type, message, sender):
     """ Used to handle an incoming message sent by another node (heh-heh-heyyyy!).
